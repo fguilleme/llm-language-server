@@ -61,6 +61,13 @@ func UpdateState(params DidChangeTextDocumentParams) error {
 	for _, change := range params.ContentChanges {
 		startIndex := FindIndex(current.Text, change.Range.Start.Line, change.Range.Start.Character)
 		endIndex := FindIndex(current.Text, change.Range.End.Line, change.Range.End.Character)
+
+		if startIndex < 0 {
+			startIndex = 0
+		}
+		if endIndex < startIndex {
+			endIndex = len(current.Text) - 1
+		}
 		current.Text = current.Text[:startIndex] + change.Text + current.Text[endIndex:]
 	}
 

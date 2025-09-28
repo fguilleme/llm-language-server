@@ -15,16 +15,17 @@ type InitializeParams struct {
 	InitializationOptions InitializationOptions `json:"initializationOptions"`
 }
 
-type TextDocumentSyncKind int
+type TextDocumentSyncKind struct {
+	OpenClose bool `json:"openClose"`
+	Change    int  `json:"change"`
+}
 
-const (
-	None        TextDocumentSyncKind = 0
-	Full                             = 1
-	Incremental                      = 2
-)
+type inlineCompletionKind struct {
+}
 
 type ServerCapabilities struct {
 	TextDocumentSync TextDocumentSyncKind `json:"textDocumentSync"`
+	InlineCompletion inlineCompletionKind `json:"inlineCompletionProvider"`
 }
 
 type ServerInfo struct {
@@ -44,7 +45,10 @@ func NewInitializeResponse(id int) ResponseMessage {
 		},
 		ID: id,
 		Result: InitializeResult{
-			Capabilities: ServerCapabilities{TextDocumentSync: Incremental},
+			Capabilities: ServerCapabilities{TextDocumentSync: TextDocumentSyncKind{
+				OpenClose: true,
+				Change:    2,
+			}},
 			ServerInfo: ServerInfo{
 				Name:    "llm-language-server",
 				Version: "1.0.0-0",
